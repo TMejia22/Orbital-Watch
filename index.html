@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORBITAL WATCH // LIVE TELEMETRY</title>
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js"></script>
+<style>
+ :root{
+ --bg: #0a0e14;
+ --panel: #0f1620;
+ --line: #1d2733;
+ --phosphor: #39ff88;
+ --phosphor-dim: #1f7a45;
+ --amber: #ffb000;
+ --text: #d7ddd9;
+ --text-dim: #5e6b66;
+ --mono: 'IBM Plex Mono','SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+ }
+ *{ box-sizing:border-box; }
+ html,body{
+ margin:0; padding:0; height:100%;
+ background:var(--bg); color:var(--text);
+ font-family:var(--mono);
+ overflow:hidden;
+ }
+ #app{
+ display:grid;
+ grid-template-rows: auto 1fr;
+ height:100%;
+ }
+ header{
+ border-bottom:1px solid var(--line);
+ padding:14px 20px;
+ display:flex; justify-content:space-between; align-items:center;
+ background:linear-gradient(180deg, #0d131c 0%, #0a0e14 100%);
+ }
+ .brand{ display:flex; align-items:baseline; gap:10px; }
+ .brand .mark{
+ color:var(--phosphor);
+ font-weight:700; letter-spacing:0.12em; font-size:14px;
+ }
+ .brand .sub{
+ color:var(--text-dim); font-size:11px; letter-spacing:0.08em;
+ }
+ .clock{
+ text-align:right; font-size:12px; color:var(--text-dim); letter-spacing:0.05em;
+ }
+ .clock .time{ color:var(--phosphor); font-size:16px; font-weight:600; }
+ main{
+ display:grid;
+ grid-template-columns: 1fr 320px;
+ min-height:0;
+ }
+ #map{ background:#0a0e14; }
+ .leaflet-container{ background:#0a0e14 !important; font-family:var(--mono) !important; }
+ .leaflet-control-zoom{
+ border:1px solid var(--line) !important;
+ border-radius:2px !important;
+ overflow:hidden;
+ }
+ .leaflet-control-zoom a{
+ background:var(--panel) !important;
+ color:var(--phosphor) !important;
+ border-color:var(--line) !important;
+ font-size:16px !important;
+ }
+ .leaflet-control-zoom a:hover{
+ background:#16202c !important;
+ }
+ .leaflet-control-attribution{
+ background:rgba(10,14,20,0.75) !important;
+ color:var(--text-dim) !important;
+ font-size:9px !important;
+ letter-spacing:0.03em;
+ }
+ .leaflet-control-attribution a{ color:var(--phosphor-dim) !important; }
+ .leaflet-control-scale-line{
+ background:rgba(10,14,20,0.7) !important;
+ border-color:var(--phosphor-dim) !important;
+ color:var(--text) !important;
+ font-size:10px !important;
+ }
+ .leaflet-tooltip.iss-tooltip{
+ background:var(--panel) !important;
+ border:1px solid var(--phosphor-dim) !important;
+ color:var(--text) !important;
+ font-family:var(--mono) !important;
+ font-size:11px !important;
+ padding:8px 10px !important;
+ border-radius:2px !important;
+ box-shadow:0 0 12px rgba(0,0,0,0.5) !important;
+ }
+ .leaflet-tooltip.iss-tooltip::before{ border-top-color:var(--phosphor-dim) !important; }
+ .iss-tooltip .tt-label{ color:var(--text-dim); font-size:9px; letter-spacing:0.08em; }
+ .iss-tooltip .tt-value{ color:var(--phosphor); }
+ .map-style-control{
+ display:flex; flex-direction:column;
+ background:var(--panel);
+ border:1px solid var(--line);
+ border-radius:2px;
+ overflow:hidden;
+ box-shadow:0 2px 10px rgba(0,0,0,0.4);
+ }
+ .map-style-control button{
+ all:unset;
+ display:block;
+ padding:7px 12px;
+ font-family:var(--mono);
+ font-size:10px;
+ letter-spacing:0.08em;
+ text-transform:uppercase;
+ color:var(--text-dim);
+ cursor:pointer;
+ border-bottom:1px solid var(--line);
+ white-space:nowrap;
+ }
+ .map-style-control button:last-child{ border-bottom:none; }
+ .map-style-control button:hover{ background:#16202c; color:var(--text); }
+ .map-style-control button.active{ color:var(--phosphor); background:#0d1a13; }
+ .map-style-heading{
+ padding:6px 12px;
+ font-family:var(--mono);
+ font-size:9px;
+ letter-spacing:0.1em;
+ text-transform:uppercase;
+ color:var(--text-dim);
+ border-bottom:1px solid var(--line);
+ background:#0a0e14;
+ }
+ .obj-select-control select{
+ background:var(--panel);
+ color:var(--phosphor);
+ border:1px solid var(--line);
+ font-family:var(--mono);
+ font-size:11px;
+ padding:6px 8px;
+ border-radius:2px;
+ outline:none;
+ min-width:170px;
+ }
+ .deep-space-card{
+ border:1px solid var(--line);
+ border-left:3px solid var(--card-color, var(--phosphor-dim));
+ border-radius:2px;
+ padding:10px 12px;
+ background:#0d131c;
+ margin-bottom:10px;
+ }
+ .deep-space-card .ds-name{
+ color:var(--card-color, var(--phosphor));
+ font-size:11px;
+ letter-spacing:0.08em;
+ text-transform:uppercase;
+ margin-bottom:6px;
+ }
+ .deep-space-card .ds-row{
+ display:flex; justify-content:space-between;
+ font-size:11px; color:var(--text-dim);
+ padding:2px 0;
+ }
+ .deep-space-card .ds-row span:last-child{ color:var(--text); }
+ aside{
+ border-left:1px solid var(--line);
+ background:var(--panel);
+ padding:18px 18px 12px;
+ overflow-y:auto;
+ display:flex; flex-direction:column; gap:18px;
+ }
+ .status-row{
+ display:flex; align-items:center; gap:8px;
+ font-size:11px; letter-spacing:0.1em; color:var(--text-dim);
+ text-transform:uppercase;
+ }
+ .dot{
+ width:7px; height:7px; border-radius:50%;
+ background:var(--phosphor);
+ box-shadow:0 0 6px var(--phosphor);
+ animation:pulse 2s infinite ease-in-out;
+ }
+ @keyframes pulse{
+ 0%,100%{ opacity:1; } 50%{ opacity:0.35; }
+ }
+ .field{
+ border-top:1px solid var(--line);
+ padding-top:10px;
+ }
+ .field .label{
+ font-size:10px; letter-spacing:0.12em; color:var(--text-dim);
+ text-transform:uppercase; margin-bottom:4px;
+ }
+ .field .value{
+ font-size:20px; color:var(--text); font-weight:600;
+ font-variant-numeric: tabular-nums;
+ }
+ .field .value .unit{
+ font-size:12px; color:var(--text-dim); font-weight:400; margin-left:4px;
+ }
+ .field.highlight .value{ color:var(--phosphor); }
+ .field.warn .value{ color:var(--amber); }
+ .grid-2{
+ display:grid; grid-template-columns:1fr 1fr; gap:14px;
+ }
+ footer.note{
+ margin-top:auto;
+ font-size:10px; color:var(--text-dim); line-height:1.6;
+ border-top:1px solid var(--line); padding-top:10px;
+ }
+ footer.note a{ color:var(--phosphor-dim); }
+ ::-webkit-scrollbar{ width:6px; }
+ ::-webkit-scrollbar-thumb{ background:var(--line); }
+ @media (max-width: 760px){
+ main{ grid-template-columns: 1fr; grid-template-rows: 55vh 1fr; }
+ aside{ border-left:none; border-top:1px solid var(--line); }
+ }
+</style>
+</head>
+<body>
+<div id="app">
+ <header>
+ <div class="brand">
+ <span class="mark">■ ORBITAL WATCH</span>
+ <span class="sub" id="objSub">NORAD 25544 / ZARYA</span>
+ </div>
+ <div class="clock">
+ <div>MISSION CLOCK (UTC)</div>
+ <div class="time" id="clock">--:--:--</div>
+ </div>
+ </header>
+ <main>
+ <div id="map"></div>
+ <aside>
+ <div class="status-row">
+ <span class="dot"></span><span id="statusText">ACQUIRING SIGNAL…</span>
+ </div>
+ <div class="field highlight">
+ <div class="label">Latitude</div>
+ <div class="value" id="lat">--<span class="unit">° </span></div>
+ </div>
+ <div class="field highlight">
+ <div class="label">Longitude</div>
+ <div class="value" id="lon">--<span class="unit">° </span></div>
+ </div>
+ <div class="grid-2">
+ <div class="field">
+ <div class="label">Altitude</div>
+ <div class="value" id="alt">--<span class="unit">km</span></div>
+ </div>
+ <div class="field">
+ <div class="label">Velocity</div>
+ <div class="value" id="vel">--<span class="unit">km/h</span></div>
+ </div>
+ </div>
+ <div class="field">
+ <div class="label">ISS sunlit state</div>
+ <div class="value" id="visibility">--</div>
+ </div>
+ <div class="field" id="passField">
+ <div class="label">Visible-pass status</div>
+ <div class="value" id="passStatus">--</div>
+ </div>
+ <div class="field">
+ <div class="label">Footprint radius</div>
+ <div class="value" id="footprint">--<span class="unit">km</span></div>
+ </div>
+ <div class="field">
+ <div class="label">Object</div>
+ <div class="value" id="satNameField" style="font-size:14px;">ISS (ZARYA)</div>
+ </div>
+ <div class="field" style="border-top:1px solid var(--line); padding-top:14px;">
+ <div class="label" style="margin-bottom:8px;">Solar System — Log-Scaled Schematic</div>
+ <svg id="solSysSvg" viewBox="0 0 260 260" style="width:100%; background:#070a10; border:1px solid var(--line); border-radius:2px;"></svg>
+ <div style="font-size:9px; color:var(--text-dim); margin-top:6px;">
+ Not to scale — radius uses a log scale so Voyager's real distance and
+ Earth/JWST's real distance can both fit on one diagram. Angle reflects
+ each object's true direction from the Sun.
+ </div>
+ </div>
+ <div class="field" style="border-top:1px solid var(--line); padding-top:14px;">
+ <div class="label" style="margin-bottom:10px;">Deep Space Objects</div>
+ <div class="deep-space-card" style="--card-color:#39c5ff;">
+ <div class="ds-name">Voyager 1</div>
+ <div class="ds-row"><span>Dist. from Earth</span><span id="v1-earth">--</span></div>
+ <div class="ds-row"><span>Dist. from Sun</span><span id="v1-sun">--</span></div>
+ <div class="ds-row"><span>Light time</span><span id="v1-lt">--</span></div>
+ </div>
+ <div class="deep-space-card" style="--card-color:#b39fff;">
+ <div class="ds-name">Voyager 2</div>
+ <div class="ds-row"><span>Dist. from Earth</span><span id="v2-earth">--</span></div>
+ <div class="ds-row"><span>Dist. from Sun</span><span id="v2-sun">--</span></div>
+ <div class="ds-row"><span>Light time</span><span id="v2-lt">--</span></div>
+ </div>
+ <div class="deep-space-card" style="--card-color:#ffd23f;">
+ <div class="ds-name">James Webb (JWST)</div>
+ <div class="ds-row"><span>Dist. from Earth</span><span id="jwst-earth">--</span></div>
+ <div class="ds-row"><span>Dist. from Sun</span><span id="jwst-sun">--</span></div>
+ <div class="ds-row"><span>Light time</span><span id="jwst-lt">--</span></div>
+ </div>
+ <div style="font-size:9px; color:var(--text-dim);" id="dsStatus">Deep space data: JPL Horizons · refreshed hourly via GitHub Action</div>
+ </div>
+ <footer class="note">
+ Earth-orbit data: CelesTrak TLEs, propagated locally via SGP4 (satellite.js).
+ Deep space data: NASA JPL Horizons.<br><br>
+ <strong style="color:var(--text)">Visible-pass overlay:</strong>
+ the dim ring is the satellite's geometric horizon footprint. The shaded
+ region is Earth's night side. Where they overlap — and the satellite
+ itself is sunlit — is roughly where it can be seen by eye right
+ now, low on the horizon at the footprint's edge and highest
+ overhead near the sub-satellite point. (Eclipse check is a simplified
+ cylindrical-shadow approximation.)
+ </footer>
+ </aside>
+ </main>
+</div>
+<script>
+ const map = L.map('map', {
+ worldCopyJump: true,
+ zoomControl: true,
+ attributionControl: true,
+ minZoom: 1,
+ maxZoom: 8,
+ zoomSnap: 0.5
+ }).setView([20, 0], 2.5);
+ L.control.attribution({ prefix: false, position: 'bottomright' })
+ .addAttribution(
+ 'Map: <a href="https://carto.com/attributions">CARTO</a> / ' +
+ '<a href="https://www.esri.com">Esri</a> · Orbits: ' +
+ '<a href="https://celestrak.org">CelesTrak</a> · Deep space: ' +
+ '<a href="https://ssd.jpl.nasa.gov/horizons/">JPL Horizons</a>'
+ )
+ .addTo(map);
+ L.control.scale({ metric: true, imperial: false, position: 'bottomleft' }).addTo(map);
+ const baseLayers = {
+ satellite: L.tileLayer(
+ 'https://server.arcgisonline.com/ArcGIS/rest/services/' +
+ 'World_Imagery/MapServer/tile/{z}/{y}/{x}',
+ { maxZoom: 8, minZoom: 1, attribution: 'Esri' }
+ ),
+ voyager: L.tileLayer(
+ 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+ { maxZoom: 8, minZoom: 1, attribution: 'CARTO' }
+ ),
+ terrain: L.tileLayer(
+ 'https://server.arcgisonline.com/ArcGIS/rest/services/' +
+ 'World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+ { maxZoom: 8, minZoom: 1, attribution: 'Esri' }
+ )
+ };
+ const baseLabels = { voyager: 'Political', satellite: 'Satellite', terrain: 'Terrain' };
+ let currentBase = 'satellite';
+ baseLayers[currentBase].addTo(map);
+ const MapStyleControl = L.Control.extend({
+ options: { position: 'topright' },
+ onAdd: function(){
+ const container = L.DomUtil.create('div', 'map-style-control');
+ const heading = L.DomUtil.create('div', 'map-style-heading', container);
+ heading.textContent = 'Map Type';
+ Object.keys(baseLayers).forEach(key => {
+ const btn = L.DomUtil.create('button', key === currentBase ? 'active' : '', container);
+ btn.textContent = baseLabels[key];
+ btn.dataset.key = key;
+ L.DomEvent.on(btn, 'click', L.DomEvent.stop).on(btn, 'click', () => {
+ if(key === currentBase) return;
+ map.removeLayer(baseLayers[currentBase]);
+ baseLayers[key].addTo(map);
+ baseLayers[key].bringToBack();
+ currentBase = key;
+ container.querySelectorAll('button').forEach(b =>
+ b.classList.toggle('active', b.dataset.key === key));
+ });
+ });
+ L.DomEvent.disableClickPropagation(container);
+ return container;
+ }
+ });
+ map.addControl(new MapStyleControl());
+
+ // ---- Earth-orbit satellite catalog (NORAD IDs, via CelesTrak TLE) ----
+ const SAT_CATALOG = {
+ 25544: { name: 'ISS (ZARYA)', color: '#39ff88' },
+ 20580: { name: 'Hubble Space Telescope', color: '#ff6b9d' },
+ 49260: { name: 'Landsat 9', color: '#2dd4bf' },
+ 43013: { name: 'NOAA-20 (JPSS-1)', color: '#3b82f6' },
+ 25994: { name: 'Terra', color: '#a3e635' }
+ };
+ let currentCatId = 25544;
+
+ const ObjectSelectControl = L.Control.extend({
+ options: { position: 'topleft' },
+ onAdd: function(){
+ const container = L.DomUtil.create('div', 'obj-select-control');
+ const select = L.DomUtil.create('select', '', container);
+ Object.keys(SAT_CATALOG).forEach(id => {
+ const opt = document.createElement('option');
+ opt.value = id;
+ opt.textContent = SAT_CATALOG[id].name;
+ select.appendChild(opt);
+ });
+ select.value = currentCatId;
+ L.DomEvent.disableClickPropagation(container);
+ L.DomEvent.on(select, 'change', () => {
+ currentCatId = select.value;
+ loadTLE(currentCatId);
+ });
+ return container;
+ }
+ });
+ map.addControl(new ObjectSelectControl());
+ const graticule = L.layerGroup().addTo(map);
+ const gridStyle = { color: '#1f2937', weight: 1, opacity: 0.6, interactive: false };
+ const equatorStyle = {
+ color: '#2a3a4a', weight: 1, opacity: 0.9,
+ interactive: false, dashArray: '2 4'
+ };
+ for(let lon = -180; lon <= 180; lon += 30){
+ L.polyline([[-85, lon],[85, lon]], gridStyle).addTo(graticule);
+ }
+ for(let lat = -60; lat <= 60; lat += 30){
+ L.polyline([[lat,-180],[lat,180]], lat === 0 ? equatorStyle : gridStyle).addTo(graticule);
+ }
+ function makeSatIcon(color){
+ return L.divIcon({
+ className: '',
+ html: `<div style="
+ width:18px;height:18px;border-radius:50%;
+ background:radial-gradient(circle, ${color} 0%, ${color}26 70%);
+ box-shadow:0 0 14px 4px ${color}99;
+ border:1px solid ${color};
+ "></div>`,
+ iconSize: [18,18],
+ iconAnchor: [9,9]
+ });
+ }
+ const marker = L.marker([0,0], { icon: makeSatIcon('#39ff88') }).addTo(map);
+ marker.bindTooltip('', { className: 'iss-tooltip', direction: 'top', offset: [0,-10] });
+ const trail = L.polyline([], { color: '#39ff88', weight: 1.5, opacity: 0.55 }).addTo(map);
+ const footprintCircle = L.circle([0,0], {
+ radius: 0,
+ color: '#39ff88',
+ weight: 1,
+ opacity: 0.25,
+ fillOpacity: 0.04
+ }).addTo(map);
+ const nightCircle = L.circle([0, 0], {
+ radius: 10007500,
+ color: '#ffb000',
+ weight: 1,
+ opacity: 0.35,
+ fillColor: '#000814',
+ fillOpacity: 0.42,
+ interactive: false
+ }).addTo(map);
+ function subsolarPoint(date){
+ const msPerDay = 86400000;
+ const start = Date.UTC(date.getUTCFullYear(), 0, 1);
+ const dayOfYear = Math.floor((date.getTime() - start) / msPerDay) + 1;
+ const utcHours = date.getUTCHours() + date.getUTCMinutes()/60 + date.getUTCSeconds()/3600;
+ const decl = -23.44 * Math.cos((2*Math.PI/365) * (dayOfYear + 10));
+ const B = (2*Math.PI/365) * (dayOfYear - 81);
+ const eot = 9.87*Math.sin(2*B) - 7.53*Math.cos(B) - 1.5*Math.sin(B); // minutes
+ let lon = -15 * (utcHours - 12) - (eot / 4);
+ lon = ((lon + 180) % 360 + 360) % 360 - 180; // normalize to -180..180
+ return { lat: decl, lon: lon };
+ }
+ function updateNightOverlay(){
+ const sun = subsolarPoint(new Date());
+ const antiLat = -sun.lat;
+ const antiLon = ((sun.lon + 180 + 180) % 360 + 360) % 360 - 180;
+ nightCircle.setLatLng([antiLat, antiLon]);
+ }
+ let history = [];
+ let centered = false;
+ let animFrom = null, animTo = null, animStart = 0;
+ const ANIM_MS = 4500;
+ function animateMarker(){
+ if(animFrom && animTo){
+ const t = Math.min(1, (performance.now() - animStart) / ANIM_MS);
+ const lat = animFrom[0] + (animTo[0]-animFrom[0]) * t;
+ const lon = animFrom[1] + (animTo[1]-animFrom[1]) * t;
+ marker.setLatLng([lat, lon]);
+ footprintCircle.setLatLng([lat, lon]);
+ }
+ requestAnimationFrame(animateMarker);
+ }
+ requestAnimationFrame(animateMarker);
+ function fmt(n, d=2){ return Number(n).toFixed(d); }
+ function setStatus(text, ok=true){
+ document.getElementById('statusText').textContent = text;
+ }
+
+ // ---- Earth-orbit: fetch TLE from CelesTrak, propagate locally with satellite.js ----
+ let satrec = null;
+ let satName = 'ISS (ZARYA)';
+
+ async function loadTLE(catId){
+ setStatus('ACQUIRING TLE…');
+ history = [];
+ trail.setLatLngs([]);
+ centered = false;
+ try{
+ const res = await fetch(`https://celestrak.org/NORAD/elements/gp.php?CATNR=${catId}&FORMAT=TLE`);
+ if(!res.ok) throw new Error('TLE fetch failed');
+ const text = (await res.text()).trim().split('\n');
+ // text[0] = name, text[1] = line1, text[2] = line2
+ const line1 = text[1].trim();
+ const line2 = text[2].trim();
+ satName = SAT_CATALOG[catId] ? SAT_CATALOG[catId].name : text[0].trim();
+ satrec = satellite.twoline2satrec(line1, line2);
+ const satColor = SAT_CATALOG[catId] ? SAT_CATALOG[catId].color : '#39ff88';
+ marker.setIcon(makeSatIcon(satColor));
+ trail.setStyle({ color: satColor });
+ document.getElementById('objSub').textContent = `NORAD ${catId} / ${satName.toUpperCase()}`;
+ document.getElementById('satNameField').textContent = satName;
+ setStatus('SIGNAL LOCKED · LIVE');
+ }catch(err){
+ console.error(err);
+ setStatus('TLE FETCH FAILED — RETRYING', false);
+ setTimeout(() => loadTLE(catId), 15000);
+ }
+ }
+
+ function subsolarEcfUnit(date){
+ const sun = subsolarPoint(date);
+ const latR = sun.lat * Math.PI/180, lonR = sun.lon * Math.PI/180;
+ return {
+ x: Math.cos(latR)*Math.cos(lonR),
+ y: Math.cos(latR)*Math.sin(lonR),
+ z: Math.sin(latR)
+ };
+ }
+
+ function updateSatellitePosition(){
+ if(!satrec) return;
+ const now = new Date();
+ const posVel = satellite.propagate(satrec, now);
+ if(!posVel.position) return;
+ const gmst = satellite.gstime(now);
+ const geo = satellite.eciToGeodetic(posVel.position, gmst);
+ const lat = satellite.degreesLat(geo.latitude);
+ const lon = satellite.degreesLong(geo.longitude);
+ const altKm = geo.height;
+ const velVec = posVel.velocity;
+ const velKmS = Math.sqrt(velVec.x**2 + velVec.y**2 + velVec.z**2);
+ const velKmH = velKmS * 3600;
+
+ // simplified cylindrical-shadow sunlit check
+ const posEcf = satellite.eciToEcf(posVel.position, gmst);
+ const sunUnit = subsolarEcfUnit(now);
+ const dot = posEcf.x*sunUnit.x + posEcf.y*sunUnit.y + posEcf.z*sunUnit.z;
+ const perpDistSq = (posEcf.x**2+posEcf.y**2+posEcf.z**2) - dot*dot;
+ const sunlit = dot > 0 || Math.sqrt(Math.max(perpDistSq,0)) > 6378;
+
+ document.getElementById('lat').innerHTML = fmt(lat) + '<span class="unit">°</span>';
+ document.getElementById('lon').innerHTML = fmt(lon) + '<span class="unit">°</span>';
+ document.getElementById('alt').innerHTML = fmt(altKm,1) + '<span class="unit">km</span>';
+ document.getElementById('vel').innerHTML = fmt(velKmH,0) + '<span class="unit">km/h</span>';
+ document.getElementById('visibility').textContent = sunlit ? 'DAYLIGHT' : 'ECLIPSE';
+
+ // horizon footprint radius (great-circle), simple geometric approximation
+ const earthR = 6378;
+ const footprintKm = earthR * Math.acos(earthR/(earthR+altKm));
+ document.getElementById('footprint').innerHTML = fmt(footprintKm,0) + '<span class="unit">km</span>';
+
+ const passStatusEl = document.getElementById('passStatus');
+ const passFieldEl = document.getElementById('passField');
+ if(sunlit){
+ passStatusEl.textContent = 'POSSIBLE — see shaded zone';
+ passFieldEl.className = 'field highlight';
+ footprintCircle.setStyle({ color:'#39ff88', opacity:0.6, fillColor:'#39ff88', fillOpacity:0.06 });
+ } else {
+ passStatusEl.textContent = "NONE — likely in Earth's shadow";
+ passFieldEl.className = 'field warn';
+ footprintCircle.setStyle({ color:'#ffb000', opacity:0.2, fillColor:'#ffb000', fillOpacity:0.02 });
+ }
+
+ marker.setTooltipContent(
+ `<div class="tt-label">${satName.toUpperCase()}</div>` +
+ `<div class="tt-value">${fmt(lat)}°, ${fmt(lon)}°</div>` +
+ `<div class="tt-label" style="margin-top:6px">ALTITUDE</div>` +
+ `<div class="tt-value">${fmt(altKm,1)} km</div>`
+ );
+
+ const currentPos = marker.getLatLng();
+ animFrom = currentPos ? [currentPos.lat, currentPos.lng] : [lat, lon];
+ animTo = [lat, lon];
+ animStart = performance.now();
+ footprintCircle.setLatLng([lat, lon]);
+ footprintCircle.setRadius(footprintKm * 1000);
+
+ history.push([lat, lon]);
+ if(history.length > 240) history.shift();
+ trail.setLatLngs(history);
+ if(!centered){ map.setView([lat, lon], 3); centered = true; }
+ }
+
+ // ---- Deep space: read from deep-space.json (kept up to date by a GitHub
+ // Action running scripts/fetch_deep_space.py once an hour, so the browser
+ // never has to call Horizons directly — avoids CORS entirely). ----
+ const DEEP_SPACE_TARGETS = {
+ v1: { earthEl: 'v1-earth', sunEl: 'v1-sun', ltEl: 'v1-lt' },
+ v2: { earthEl: 'v2-earth', sunEl: 'v2-sun', ltEl: 'v2-lt' },
+ jwst: { earthEl: 'jwst-earth', sunEl: 'jwst-sun', ltEl: 'jwst-lt' }
+ };
+
+ // ---- Solar System schematic (log-scaled, angularly accurate) ----
+ function auToPx(auDist){
+ const a = 29, b = 36.4; // tuned so Earth(~1AU)≈40px, Voyager(~150AU)≈110px
+ return Math.min(115, a + b * Math.log10(auDist + 1));
+ }
+
+ function renderSolarSystem(data){
+ const svg = document.getElementById('solSysSvg');
+ if(!svg) return;
+ const cx = 130, cy = 130;
+ let html = '';
+ html += `<circle cx="${cx}" cy="${cy}" r="6" fill="#ffd23f"/>`;
+ html += `<text x="${cx}" y="${cy-10}" fill="#ffd23f" font-size="8" text-anchor="middle" font-family="monospace">SUN</text>`;
+
+ let earthPx = 40, earthAngle = 0;
+ const earth = data.earth;
+ if(earth && typeof earth.xAU === 'number'){
+ const dist = Math.sqrt(earth.xAU**2 + earth.yAU**2);
+ earthPx = auToPx(dist);
+ earthAngle = Math.atan2(earth.yAU, earth.xAU);
+ }
+ html += `<circle cx="${cx}" cy="${cy}" r="${earthPx}" fill="none" stroke="#1d2733" stroke-dasharray="2 3"/>`;
+ const ex = cx + earthPx * Math.cos(earthAngle);
+ const ey = cy - earthPx * Math.sin(earthAngle);
+ html += `<circle cx="${ex}" cy="${ey}" r="4" fill="#3b82f6"/>`;
+ html += `<text x="${ex}" y="${ey-8}" fill="#3b82f6" font-size="7" text-anchor="middle" font-family="monospace">EARTH</text>`;
+
+ // JWST orbits near Earth (Sun-Earth L2) — true separation (~0.01 AU) is
+ // far too small to show at this scale, so it's drawn with a small fixed
+ // offset from Earth's marker rather than to true scale.
+ const jwst = data.objects && data.objects.jwst;
+ if(jwst && !jwst.error){
+ const jx = ex + 10, jy = ey - 10;
+ html += `<line x1="${ex}" y1="${ey}" x2="${jx}" y2="${jy}" stroke="#ffd23f" stroke-width="0.5" opacity="0.5"/>`;
+ html += `<circle cx="${jx}" cy="${jy}" r="3" fill="#ffd23f"/>`;
+ html += `<text x="${jx}" y="${jy-6}" fill="#ffd23f" font-size="7" text-anchor="middle" font-family="monospace">JWST</text>`;
+ }
+
+ const voyagerStyle = { v1: { color: '#39c5ff', label: 'VOYAGER 1' }, v2: { color: '#b39fff', label: 'VOYAGER 2' } };
+ Object.keys(voyagerStyle).forEach(key => {
+ const obj = data.objects && data.objects[key];
+ if(!obj || obj.error || typeof obj.xAU !== 'number') return;
+ const dist = Math.sqrt(obj.xAU**2 + obj.yAU**2);
+ const px = auToPx(dist);
+ const angle = Math.atan2(obj.yAU, obj.xAU);
+ const x = cx + px * Math.cos(angle);
+ const y = cy - px * Math.sin(angle);
+ const { color, label } = voyagerStyle[key];
+ html += `<circle cx="${x}" cy="${y}" r="4" fill="${color}"/>`;
+ html += `<text x="${x}" y="${y-8}" fill="${color}" font-size="7" text-anchor="middle" font-family="monospace">${label}</text>`;
+ });
+
+ svg.innerHTML = html;
+ }
+
+ async function fetchAllDeepSpace(){
+ try{
+ const res = await fetch('./deep-space.json', { cache: 'no-store' });
+ if(!res.ok) throw new Error('deep-space.json not found (has the GitHub Action run yet?)');
+ const data = await res.json();
+ Object.keys(DEEP_SPACE_TARGETS).forEach(key => {
+ const cfg = DEEP_SPACE_TARGETS[key];
+ const obj = data.objects && data.objects[key];
+ if(obj && !obj.error){
+ document.getElementById(cfg.earthEl).textContent = obj.distanceFromEarthDisplay;
+ document.getElementById(cfg.sunEl).textContent = obj.distanceFromSunDisplay;
+ document.getElementById(cfg.ltEl).textContent = obj.lightTimeDisplay;
+ } else {
+ document.getElementById(cfg.earthEl).textContent = 'N/A';
+ document.getElementById(cfg.sunEl).textContent = 'N/A';
+ document.getElementById(cfg.ltEl).textContent = 'N/A';
+ }
+ });
+ renderSolarSystem(data);
+ const statusEl = document.getElementById('dsStatus');
+ if(data.updatedAt){
+ const updated = new Date(data.updatedAt);
+ statusEl.textContent =
+ 'Deep space data: JPL Horizons · last updated ' +
+ updated.toISOString().slice(0,16).replace('T',' ') + ' UTC';
+ } else {
+ statusEl.textContent =
+ 'Deep space data: waiting for first GitHub Action run (hourly refresh)';
+ }
+ }catch(err){
+ console.error('Failed to load deep-space.json', err);
+ document.getElementById('dsStatus').textContent =
+ 'Deep space data unavailable — deep-space.json not found';
+ }
+ }
+
+ function tickClock(){
+ const now = new Date();
+ document.getElementById('clock').textContent = now.toISOString().substr(11,8) + ' UTC';
+ }
+
+ loadTLE(currentCatId);
+ tickClock();
+ updateNightOverlay();
+ fetchAllDeepSpace();
+ setInterval(updateSatellitePosition, 2000);
+ setInterval(() => loadTLE(currentCatId), 2 * 3600000); // refresh TLE every 2 hours
+ setInterval(tickClock, 1000);
+ setInterval(updateNightOverlay, 60000);
+ setInterval(fetchAllDeepSpace, 15 * 60000); // re-check every 15 min
+</script>
+</body>
+</html>

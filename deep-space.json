@@ -1,0 +1,9 @@
+{
+  "updatedAt": null,
+  "earth": { "xAU": 1.0, "yAU": 0.0 },
+  "objects": {
+    "v1": { "name": "Voyager 1", "error": "Not yet fetched — waiting for first GitHub Action run" },
+    "v2": { "name": "Voyager 2", "error": "Not yet fetched — waiting for first GitHub Action run" },
+    "jwst": { "name": "James Webb (JWST)", "error": "Not yet fetched — waiting for first GitHub Action run" }
+  }
+}
