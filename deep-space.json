@@ -1,9 +1,39 @@
 {
-  "updatedAt": null,
-  "earth": { "xAU": 1.0, "yAU": 0.0 },
+  "updatedAt": "2026-07-01T20:00:48.648017+00:00",
   "objects": {
-    "v1": { "name": "Voyager 1", "error": "Not yet fetched — waiting for first GitHub Action run" },
-    "v2": { "name": "Voyager 2", "error": "Not yet fetched — waiting for first GitHub Action run" },
-    "jwst": { "name": "James Webb (JWST)", "error": "Not yet fetched — waiting for first GitHub Action run" }
+    "v1": {
+      "name": "Voyager 1",
+      "xAU": -32.05301342005979,
+      "yAU": -136.10136459227584,
+      "distanceFromSunKm": 25584239930.069042,
+      "distanceFromSunDisplay": "25584.2 M km",
+      "distanceFromEarthKm": 25469215207.485962,
+      "distanceFromEarthDisplay": "25469.2 M km",
+      "lightTimeDisplay": "23.60 hr"
+    },
+    "v2": {
+      "name": "Voyager 2",
+      "xAU": 39.66692576933493,
+      "yAU": -104.96804029066098,
+      "distanceFromSunKm": 21435299669.35577,
+      "distanceFromSunDisplay": "21435.3 M km",
+      "distanceFromEarthKm": 21318976045.147007,
+      "distanceFromEarthDisplay": "21319.0 M km",
+      "lightTimeDisplay": "19.75 hr"
+    },
+    "jwst": {
+      "name": "James Webb (JWST)",
+      "xAU": 0.15514881154987517,
+      "yAU": -1.0159301898067692,
+      "distanceFromSunKm": 153743389.12259117,
+      "distanceFromSunDisplay": "153.7 M km",
+      "distanceFromEarthKm": 1746539.7945593565,
+      "distanceFromEarthDisplay": "1,746,540 km",
+      "lightTimeDisplay": "5.8 s"
+    }
+  },
+  "earth": {
+    "xAU": 0.15613996581438028,
+    "yAU": -1.0045156306066454
   }
 }
