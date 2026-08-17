@@ -1,39 +1,39 @@
 {
-  "updatedAt": "2026-08-16T23:18:24.654787+00:00",
+  "updatedAt": "2026-08-17T01:12:28.416957+00:00",
   "objects": {
     "v1": {
       "name": "Voyager 1",
-      "xAU": -32.10802465585354,
-      "yAU": -136.46298294428132,
-      "distanceFromSunKm": 25651335976.36606,
-      "distanceFromSunDisplay": "25651.3 M km",
-      "distanceFromEarthKm": 25601434218.604347,
-      "distanceFromEarthDisplay": "25601.4 M km",
+      "xAU": -32.10922039928072,
+      "yAU": -136.4708441761908,
+      "distanceFromSunKm": 25652794574.25503,
+      "distanceFromSunDisplay": "25652.8 M km",
+      "distanceFromEarthKm": 25604811140.1367,
+      "distanceFromEarthDisplay": "25604.8 M km",
       "lightTimeDisplay": "23.72 hr"
     },
     "v2": {
       "name": "Voyager 2",
-      "xAU": 39.77859883893512,
-      "yAU": -105.21619847996433,
-      "distanceFromSunKm": 21495094755.2477,
-      "distanceFromSunDisplay": "21495.1 M km",
-      "distanceFromEarthKm": 21394919295.49707,
-      "distanceFromEarthDisplay": "21394.9 M km",
-      "lightTimeDisplay": "19.82 hr"
+      "xAU": 39.78102652373452,
+      "yAU": -105.22159312796556,
+      "distanceFromSunKm": 21496394673.46005,
+      "distanceFromSunDisplay": "21496.4 M km",
+      "distanceFromEarthKm": 21397314597.11309,
+      "distanceFromEarthDisplay": "21397.3 M km",
+      "lightTimeDisplay": "19.83 hr"
     },
     "jwst": {
       "name": "James Webb (JWST)",
-      "xAU": 0.810483950385419,
-      "yAU": -0.6211938539144732,
-      "distanceFromSunKm": 152763259.14523748,
-      "distanceFromSunDisplay": "152.8 M km",
-      "distanceFromEarthKm": 1454926.2212571802,
-      "distanceFromEarthDisplay": "1,454,926 km",
-      "lightTimeDisplay": "4.9 s"
+      "xAU": 0.8206612513581599,
+      "yAU": -0.6073060927413209,
+      "distanceFromSunKm": 152729533.3645708,
+      "distanceFromSunDisplay": "152.7 M km",
+      "distanceFromEarthKm": 1444694.3773939158,
+      "distanceFromEarthDisplay": "1,444,694 km",
+      "lightTimeDisplay": "4.8 s"
     }
   },
   "earth": {
-    "xAU": 0.8066647694619955,
-    "yAU": -0.6122647611105408
+    "xAU": 0.8166711520698557,
+    "yAU": -0.598531711471783
   }
 }
