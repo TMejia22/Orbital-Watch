@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-08T18:20:02.420048+00:00",
+  "updatedAt": "2026-09-08T21:35:25.603636+00:00",
   "objects": {
     "v1": {
       "name": "Voyager 1",
@@ -23,12 +23,12 @@
     },
     "jwst": {
       "name": "James Webb (JWST)",
-      "xAU": 0.9806378362332887,
-      "yAU": -0.2640654508392514,
-      "distanceFromSunKm": 151927244.13852242,
+      "xAU": 0.9806378375837405,
+      "yAU": -0.2640654517243276,
+      "distanceFromSunKm": 151927244.37102857,
       "distanceFromSunDisplay": "151.9 M km",
-      "distanceFromEarthKm": 1233441.2990914357,
-      "distanceFromEarthDisplay": "1,233,441 km",
+      "distanceFromEarthKm": 1233441.9005839205,
+      "distanceFromEarthDisplay": "1,233,442 km",
       "lightTimeDisplay": "4.1 s"
     }
   },
