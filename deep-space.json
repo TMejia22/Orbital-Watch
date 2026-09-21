@@ -1,18 +1,39 @@
 {
-  "updatedAt": "2026-09-20T23:00:10.879601+00:00",
+  "updatedAt": "2026-09-21T03:31:42.218209+00:00",
   "objects": {
     "v1": {
       "name": "Voyager 1",
-      "error": "<urlopen error timed out>"
+      "xAU": -32.15106757769529,
+      "yAU": -136.74598649431212,
+      "distanceFromSunKm": 25703845212.412342,
+      "distanceFromSunDisplay": "25703.8 M km",
+      "distanceFromEarthKm": 25727499023.41717,
+      "distanceFromEarthDisplay": "25727.5 M km",
+      "lightTimeDisplay": "23.84 hr"
     },
     "v2": {
       "name": "Voyager 2",
-      "error": "<urlopen error timed out>"
+      "xAU": 39.86599549537959,
+      "yAU": -105.41040344518802,
+      "distanceFromSunKm": 21541892487.26491,
+      "distanceFromSunDisplay": "21541.9 M km",
+      "distanceFromEarthKm": 21496344404.12295,
+      "distanceFromEarthDisplay": "21496.3 M km",
+      "lightTimeDisplay": "19.92 hr"
     },
     "jwst": {
       "name": "James Webb (JWST)",
-      "error": "<urlopen error timed out>"
+      "xAU": 1.0112884107633038,
+      "yAU": -0.03994894391217321,
+      "distanceFromSunKm": 151404823.93392918,
+      "distanceFromSunDisplay": "151.4 M km",
+      "distanceFromEarthKm": 1229752.4530450308,
+      "distanceFromEarthDisplay": "1,229,752 km",
+      "lightTimeDisplay": "4.1 s"
     }
   },
-  "earthError": "<urlopen error timed out>"
+  "earth": {
+    "xAU": 1.003312894195875,
+    "yAU": -0.04082011378475408
+  }
 }
