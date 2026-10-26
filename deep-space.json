@@ -1,39 +1,18 @@
 {
-  "updatedAt": "2026-10-26T03:25:24.667490+00:00",
+  "updatedAt": "2026-10-26T09:45:24.951983+00:00",
   "objects": {
     "v1": {
       "name": "Voyager 1",
-      "xAU": -32.19290787976439,
-      "yAU": -137.02112784401336,
-      "distanceFromSunKm": 25754895382.714695,
-      "distanceFromSunDisplay": "25754.9 M km",
-      "distanceFromEarthKm": 25841821849.504272,
-      "distanceFromEarthDisplay": "25841.8 M km",
-      "lightTimeDisplay": "23.94 hr"
+      "error": "Unexpected Horizons response format (no $$SOE/$$EOE markers)"
     },
     "v2": {
       "name": "Voyager 2",
-      "xAU": 39.950963901956996,
-      "yAU": -105.59920976582772,
-      "distanceFromSunKm": 21587391641.78057,
-      "distanceFromSunDisplay": "21587.4 M km",
-      "distanceFromEarthKm": 21611074378.087814,
-      "distanceFromEarthDisplay": "21611.1 M km",
-      "lightTimeDisplay": "20.02 hr"
+      "error": "Unexpected Horizons response format (no $$SOE/$$EOE markers)"
     },
     "jwst": {
       "name": "James Webb (JWST)",
-      "xAU": 0.845875431968234,
-      "yAU": 0.539289936513968,
-      "distanceFromSunKm": 150071269.66148627,
-      "distanceFromSunDisplay": "150.1 M km",
-      "distanceFromEarthKm": 1551217.3979107218,
-      "distanceFromEarthDisplay": "1,551,217 km",
-      "lightTimeDisplay": "5.2 s"
+      "error": "Unexpected Horizons response format (no $$SOE/$$EOE markers)"
     }
   },
-  "earth": {
-    "xAU": 0.841184133752359,
-    "yAU": 0.5300460393962507
-  }
+  "earthError": "Unexpected Horizons response format (no $$SOE/$$EOE markers)"
 }
