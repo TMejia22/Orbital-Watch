@@ -1,39 +1,18 @@
 {
-  "updatedAt": "2026-11-09T20:25:59.874659+00:00",
+  "updatedAt": "2026-11-10T03:11:21.770195+00:00",
   "objects": {
     "v1": {
       "name": "Voyager 1",
-      "xAU": -32.20964209688011,
-      "yAU": -137.13118452377245,
-      "distanceFromSunKm": 25775315369.717476,
-      "distanceFromSunDisplay": "25775.3 M km",
-      "distanceFromEarthKm": 25879873549.471977,
-      "distanceFromEarthDisplay": "25879.9 M km",
-      "lightTimeDisplay": "23.98 hr"
+      "error": "Could not parse X/Y/Z from row: '2461354.500000000, A.D. 2026-Nov-10 00:00:00.0000,'"
     },
     "v2": {
       "name": "Voyager 2",
-      "xAU": 39.9849510916562,
-      "yAU": -105.67473159048306,
-      "distanceFromSunKm": 21605591720.21449,
-      "distanceFromSunDisplay": "21605.6 M km",
-      "distanceFromEarthKm": 21655949131.55735,
-      "distanceFromEarthDisplay": "21655.9 M km",
-      "lightTimeDisplay": "20.07 hr"
+      "error": "Could not parse X/Y/Z from row: '2461354.500000000, A.D. 2026-Nov-10 00:00:00.0000,'"
     },
     "jwst": {
       "name": "James Webb (JWST)",
-      "xAU": 0.688610484176975,
-      "yAU": 0.7257459877437568,
-      "distanceFromSunKm": 149664670.4552623,
-      "distanceFromSunDisplay": "149.7 M km",
-      "distanceFromEarthKm": 1638527.6198275525,
-      "distanceFromEarthDisplay": "1,638,528 km",
-      "lightTimeDisplay": "5.5 s"
+      "error": "Could not parse X/Y/Z from row: '2461354.500000000, A.D. 2026-Nov-10 00:00:00.0000,'"
     }
   },
-  "earth": {
-    "xAU": 0.6854332478585814,
-    "yAU": 0.7153361210882583
-  }
+  "earthError": "Could not parse X/Y/Z from row: '2461354.500000000, A.D. 2026-Nov-10 00:00:00.0000,'"
 }
