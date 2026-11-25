@@ -1,39 +1,39 @@
 {
-  "updatedAt": "2026-11-24T19:56:54.190995+00:00",
+  "updatedAt": "2026-11-25T03:25:33.922364+00:00",
   "objects": {
     "v1": {
       "name": "Voyager 1",
-      "xAU": -32.227570201421386,
-      "yAU": -137.24910274640996,
-      "distanceFromSunKm": 25797193899.62199,
-      "distanceFromSunDisplay": "25797.2 M km",
-      "distanceFromEarthKm": 25913758473.525547,
-      "distanceFromEarthDisplay": "25913.8 M km",
+      "xAU": -32.22876534886618,
+      "yAU": -137.25696397522643,
+      "distanceFromSunKm": 25798652467.14404,
+      "distanceFromSunDisplay": "25798.7 M km",
+      "distanceFromEarthKm": 25915741171.21816,
+      "distanceFromEarthDisplay": "25915.7 M km",
       "lightTimeDisplay": "24.01 hr"
     },
     "v2": {
       "name": "Voyager 2",
-      "xAU": 40.02136603807397,
-      "yAU": -105.75564764994688,
-      "distanceFromSunKm": 21625092106.349888,
-      "distanceFromSunDisplay": "21625.1 M km",
-      "distanceFromEarthKm": 21700665180.857525,
-      "distanceFromEarthDisplay": "21700.7 M km",
+      "xAU": 40.02379371243824,
+      "yAU": -105.7610420483287,
+      "distanceFromSunKm": 21626392143.64963,
+      "distanceFromSunDisplay": "21626.4 M km",
+      "distanceFromEarthKm": 21703479333.47705,
+      "distanceFromEarthDisplay": "21703.5 M km",
       "lightTimeDisplay": "20.11 hr"
     },
     "jwst": {
       "name": "James Webb (JWST)",
-      "xAU": 0.47588480351730444,
-      "yAU": 0.8773127441534728,
-      "distanceFromSunKm": 149309485.90700442,
+      "xAU": 0.4603954645552293,
+      "yAU": 0.8853793686674426,
+      "distanceFromSunKm": 149288258.62300175,
       "distanceFromSunDisplay": "149.3 M km",
-      "distanceFromEarthKm": 1694477.4954915456,
-      "distanceFromEarthDisplay": "1,694,477 km",
+      "distanceFromEarthKm": 1696443.798101775,
+      "distanceFromEarthDisplay": "1,696,444 km",
       "lightTimeDisplay": "5.7 s"
     }
   },
   "earth": {
-    "xAU": 0.4736286612337457,
-    "yAU": 0.8663950276989452
+    "xAU": 0.4581877572414511,
+    "yAU": 0.8744453067149772
   }
 }
